@@ -4,7 +4,7 @@
 //using namespace std;
 
 vector<string> split(string s, string p);
-KDDDataSet readData(const string filename);
+vector<KDDData> readData(const string filename);
 
 int main()
 {
@@ -31,9 +31,9 @@ vector<string> split(string s, string p)
 	return result;
 }
 
-KDDDataSet readData(const string filename)
+vector<KDDData> readData(const string filename)
 { //从KDD数据文件中读取数据
-	KDDDataSet result;
+	vector<KDDData> result;
 	KDDData data;
 	vector<string> temp;
 	string s;
@@ -54,7 +54,7 @@ KDDDataSet readData(const string filename)
 		else if ((temp[41] == "back") || (temp[41] == "land") || (temp[41] == "neptune")
 			|| (temp[41] == "pod") || (temp[41] == "teardrop") || (temp[41] == "smurf"))
 			data.isDoS = true;
-		result.datas.push_back(data);
+		result.push_back(data);
 	}
 	in.close();
 	return result;
