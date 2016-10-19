@@ -24,4 +24,13 @@
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
+    <None Include="corrected">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="kddcup.data_10_percent_corrected">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
 </Project>

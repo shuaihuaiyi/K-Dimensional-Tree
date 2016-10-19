@@ -3,39 +3,17 @@
 #include "KBTree.h"
 using namespace std;
 
-struct KDDData
+vector<string> split(string s, string p);
+vector<KDDData> readData(const string filename);
+
+int main()
 {
-	/*
-	//基本属性集
-	double duration;		//length (number of seconds) of the connection					0
-	string protocol_type;	//type of the protocol, e.g. tcp, udp, etc.						1
-	string service;			//network service on the destination, e.g., http, telnet,etc.	2
-	string flag;			//normal or error status of the connection						3
-	double src_bytes;		//number of data bytes from source to destination				4
-	double dst_bytes;		//number of data bytes from destination to source				5
-	bool land;				//1 if connection is from/to the same host/port;0 otherwise		6
-	double wrong_fragment;	//number of ``wrong'' fragments									7
-	double urgent;			//number of urgent packets										8
-	//忽略特征9~21
-	//流量属性集
-	double count; 			//number of connections to the same host as the current connection in the past two seconds		22
-	double srv_count;		//number of connections to the same service as the current connection in the past two seconds	23
-	double serror_rate;		//% of connections that have ``SYN'' errors						24
-	double srv_serror_rate;	//% of connections that have ``SYN'' errors						25
-	double rerror_rate;		//% of connections that have ``REJ'' errors						26
-	double srv_rerror_rate;	//% of connections that have ``REJ'' errors						27
-	double same_srv_rate;	//% of connections to the same service							28
-	double diff_srv_rate;	//% of connections to different services						29
-	double srv_diff_host_rate;//% of connections to different hosts							30
-	//忽略特征31~40
-	*/
-	double properties[9];	//所有的流量属性，对应源数据中的第22-30项
-	bool isNormal = false;	//这个连接的类型，normal表示正常流量										41
-	bool isDoS = false;		//这个连接的类型，back，land，neptune，pod，teardrop，smurf表示DoS攻击		41
-};
+	vector<KDDData> result = readData("kddcup.data_10_percent_corrected");
+	return 0;
+}
 
 vector<string> split(string s, string p)
-{	//将s字符串按p分割
+{ //将s字符串按p分割
 	int pos;
 	int size = s.size();
 	vector<string> result;
@@ -54,7 +32,7 @@ vector<string> split(string s, string p)
 }
 
 vector<KDDData> readData(const string filename)
-{	//从KDD数据文件中读取数据
+{ //从KDD数据文件中读取数据
 	vector<KDDData> result;
 	KDDData data;
 	vector<string> temp;
@@ -73,17 +51,11 @@ vector<KDDData> readData(const string filename)
 			data.properties[i] = atof(temp[i + 22].data());
 		if (temp[41] == "normal")
 			data.isNormal = true;
-		else if ((temp[41] == "back") || (temp[41] == "land") || (temp[41] == "neptune") 
+		else if ((temp[41] == "back") || (temp[41] == "land") || (temp[41] == "neptune")
 			|| (temp[41] == "pod") || (temp[41] == "teardrop") || (temp[41] == "smurf"))
 			data.isDoS = true;
 		result.push_back(data);
 	}
 	in.close();
 	return result;
-}
-
-int main()
-{
-
-	return 0;
 }
