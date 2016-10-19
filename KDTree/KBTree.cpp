@@ -5,7 +5,8 @@ using namespace std;
 
 struct KDDData
 {
-	/*//基本属性集
+	/*
+	//基本属性集
 	double duration;		//length (number of seconds) of the connection					0
 	string protocol_type;	//type of the protocol, e.g. tcp, udp, etc.						1
 	string service;			//network service on the destination, e.g., http, telnet,etc.	2
@@ -26,9 +27,11 @@ struct KDDData
 	double same_srv_rate;	//% of connections to the same service							28
 	double diff_srv_rate;	//% of connections to different services						29
 	double srv_diff_host_rate;//% of connections to different hosts							30
-	//忽略特征31~40*/
+	//忽略特征31~40
+	*/
 	double properties[9];	//所有的流量属性，对应源数据中的第22-30项
-	string label;			//这个连接的类型，back，land，neptune，pod，teardrop，smurf表示DoS攻击			41
+	bool isNormal = false;	//这个连接的类型，normal表示正常流量										41
+	bool isDoS = false;		//这个连接的类型，back，land，neptune，pod，teardrop，smurf表示DoS攻击		41
 };
 
 vector<string> split(string s, string p)
@@ -68,7 +71,11 @@ vector<KDDData> readData(const string filename)
 		temp = split(s, ",");
 		for (int i = 0; i < 9; i++)
 			data.properties[i] = atof(temp[i + 22].data());
-		data.label = temp[41];
+		if (temp[41] == "normal")
+			data.isNormal = true;
+		else if ((temp[41] == "back") || (temp[41] == "land") || (temp[41] == "neptune") 
+			|| (temp[41] == "pod") || (temp[41] == "teardrop") || (temp[41] == "smurf"))
+			data.isDoS = true;
 		result.push_back(data);
 	}
 	in.close();
@@ -77,10 +84,6 @@ vector<KDDData> readData(const string filename)
 
 int main()
 {
-	KDDData b;
-	vector<KDDData> a;
-	a.push_back(b);
-	b.count = 0;
-	a.push_back(b);
+
 	return 0;
 }
