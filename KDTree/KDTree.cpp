@@ -4,7 +4,7 @@
 //using namespace std;
 
 vector<string> split(string s, string p);
-vector<KDDData> readData(const string filename);
+vector<KDDData> readData(const string filename, int divider);
 
 int main()
 {
@@ -31,8 +31,8 @@ vector<string> split(string s, string p)
 	return result;
 }
 
-vector<KDDData> readData(const string filename)
-{ //从KDD数据文件中读取数据
+vector<KDDData> readData(const string filename, int divider)
+{ //从KDD数据文件中读取数据的1/n
 	vector<KDDData> result;
 	KDDData data;
 	vector<string> temp;
@@ -46,6 +46,14 @@ vector<KDDData> readData(const string filename)
 	}
 	while (getline(in, s))
 	{
+		for (int i = 0;i < divider; i++)
+		{
+			if (!getline(in, s))
+			{
+				in.close();
+				return result;
+			}
+		}
 		temp = split(s, ",");
 		for (int i = 0; i < 9; i++)
 			data.properties[i] = atof(temp[i + 22].data());
