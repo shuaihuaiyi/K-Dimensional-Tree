@@ -38,7 +38,13 @@ struct KDDData
 	bool isNormal = false;	//这个连接的类型，normal表示正常流量										41
 	bool isDoS = false;		//这个连接的类型，back，land，neptune，pod，teardrop，smurf表示DoS攻击		41
 };
-
+struct KDDDataSet
+{
+	vector<KDDData> datas;
+	double maxs[9];
+	double mins[9];
+	int order[9];
+};
 struct KDTreeNode
 {
 	int d;			//分割维
@@ -62,7 +68,7 @@ private:
 	KDTreeNode * root;
 };
 
-KDTree::KDTree(vector<KDDData> datas)
+KDTree::KDTree(vector<KDDData> datas, double maxs[], double mins[],)
 {
 	root = new KDTreeNode;
 
