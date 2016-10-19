@@ -58,13 +58,23 @@ public:
 	int getResult(KDDData testData);
 
 private:
+	KDTreeNode * buildTree();
 	KDTreeNode * root;
 };
 
 KDTree::KDTree(vector<KDDData> datas)
 {
-	root = new KDTreeNode;
+	double new_max = 2;
+	double new_min = 0;
+	//TODO:规格化
+	
+	//todo 递归建树
+}
 
+KDTreeNode * KDTree::buildTree()
+{//递归建树
+
+	return NULL;
 }
 
 KDTree::~KDTree()
