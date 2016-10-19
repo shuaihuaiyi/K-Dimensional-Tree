@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "KBTree.h"
-using namespace std;
+//using namespace std;
 
 vector<string> split(string s, string p);
 vector<KDDData> readData(const string filename);
