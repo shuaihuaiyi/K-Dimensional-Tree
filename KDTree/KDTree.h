@@ -54,38 +54,52 @@ struct KDTreeNode
 class KDTree
 {
 public:
-	KDTree(list<KDDData> datas);
+	KDTree(list<KDDData>& datas);
 	~KDTree();
 	void test(list<KDDData> testDatas);
 	int getResult(KDDData testData);
 
 private:
 	KDTreeNode * buildTree();
+
 	KDTreeNode * root;
 };
 
-KDTree::KDTree(list<KDDData> datas)
+KDTree::KDTree(list<KDDData>& datas)
 {
 	double new_max = 2;
 	double new_min = 0;
-	double maxs[9];
-	double mins[9];
+	double maxs[9];		//第N维的最大值
+	double mins[9];		//第N维的最小值
 	if (datas.empty())
 	{
 		cerr << "用于建立KD树的数据集是空集" << endl;
 		return;
 	}
-	for (list<KDDData>::iterator data = datas.begin();data != datas.end();++data)
+	//else
+	//获取数据边界
+	for (int i = 0; i < 9; ++i)
+		mins[i] = maxs[i] = datas.begin()->properties[i];
+	for (KDDData& data : datas)
 	{
 		for (int i = 0; i < 9; i++)
 		{
-			maxs[i] = data->properties[i];
-			mins[i] = data->properties[i];
+			maxs[i] = data.properties[i] > maxs[i] ? data.properties[i] : maxs[i];
+			mins[i] = data.properties[i] < mins[i] ? data.properties[i] : mins[i];
 		}
 	}
-	//TODO:规格化
-	
-	//todo 递归建树
+	//规格化数据
+	for (int i = 0; i < 9; ++i)
+	{
+		double radio = new_max - new_min / maxs[i] - mins[i];
+		if (1 - radio < 0.001 || radio - 1 < 0.001)
+			continue;
+		for (KDDData& data : datas)
+			data.properties[i] = (data.properties[i] - mins[i])*radio;//+new_mins
+	}
+	//递归建树
+	root
+	buildTree();
 }
 
 KDTreeNode * KDTree::buildTree()

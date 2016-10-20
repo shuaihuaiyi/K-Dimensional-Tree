@@ -118,6 +118,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Data.h" />
     <ClInclude Include="KDTree.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,18 +1,29 @@
 #include <iostream>
 #include <fstream>
+#include <time.h>
 #include "KDTree.h"
 //using namespace std;
 
-vector<string> split(string s, string p);
-list<KDDData> readData(const string filename, int divider);
+vector<string> split(string& s, const string& p);
+list<KDDData> readData(const string& filename, int divider);
 
 int main()
 {
+	clock_t start, finish;
+	string s;
+	int i = 0;
+	double totaltime;
+//	std::ios_base::sync_with_stdio(false);
+	start = clock();
+
 	list<KDDData> result = readData("kddcup.data_10_percent_corrected", 500);
+	finish = clock();
+	totaltime = double(finish - start) / CLOCKS_PER_SEC;
+	cout << "此程序的运行时间为" << totaltime << "秒！" << endl;
 	return 0;
 }
 
-vector<string> split(string s, string p)
+vector<string> split(string& s, const string& p)
 { //将s字符串按p分割
 	int pos;
 	int size = s.size();
@@ -32,7 +43,7 @@ vector<string> split(string s, string p)
 	return result;
 }
 
-list<KDDData> readData(const string filename, int divider)
+list<KDDData> readData(const string& filename, int divider)
 { //从KDD数据文件中读取1/n的数据
 	list<KDDData> result;
 	KDDData data;
