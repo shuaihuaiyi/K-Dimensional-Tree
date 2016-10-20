@@ -4,11 +4,11 @@
 //using namespace std;
 
 vector<string> split(string s, string p);
-vector<KDDData> readData(const string filename, int divider);
+list<KDDData> readData(const string filename, int divider);
 
 int main()
 {
-	vector<KDDData> result = readData("kddcup.data_10_percent_corrected", 500);
+	list<KDDData> result = readData("kddcup.data_10_percent_corrected", 500);
 	return 0;
 }
 
@@ -17,6 +17,7 @@ vector<string> split(string s, string p)
 	int pos;
 	int size = s.size();
 	vector<string> result;
+	result.reserve(50);
 	s += p;
 	for (int i = 0; i < size; i++)
 	{
@@ -31,9 +32,9 @@ vector<string> split(string s, string p)
 	return result;
 }
 
-vector<KDDData> readData(const string filename, int divider)
+list<KDDData> readData(const string filename, int divider)
 { //从KDD数据文件中读取1/n的数据
-	vector<KDDData> result; //todo 这里用vector太慢
+	list<KDDData> result;
 	KDDData data;
 	vector<string> temp;
 	string s;
@@ -44,6 +45,7 @@ vector<KDDData> readData(const string filename, int divider)
 		cerr << "打开文件失败" << endl;
 		exit(-1);
 	}
+	temp.reserve(50);
 	while (getline(in, s))
 	{
 		for (int i = 0;i < divider; i++)
