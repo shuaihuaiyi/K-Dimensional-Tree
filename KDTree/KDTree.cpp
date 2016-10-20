@@ -32,7 +32,7 @@ vector<string> split(string s, string p)
 }
 
 vector<KDDData> readData(const string filename, int divider)
-{ //从KDD数据文件中读取数据的1/n
+{ //从KDD数据文件中读取1/n的数据
 	vector<KDDData> result;
 	KDDData data;
 	vector<string> temp;

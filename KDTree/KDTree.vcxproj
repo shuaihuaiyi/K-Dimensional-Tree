@@ -118,10 +118,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="KBTree.h" />
+    <ClInclude Include="KDTree.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="KBTree.cpp" />
+    <ClCompile Include="KDTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />

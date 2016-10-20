@@ -66,6 +66,21 @@ KDTree::KDTree(vector<KDDData> datas)
 {
 	double new_max = 2;
 	double new_min = 0;
+	double maxs[9];
+	double mins[9];
+	if (datas.empty())
+	{
+		cerr << "用于建立KD树的数据集是空集" << endl;
+		return;
+	}
+	for (vector<KDDData>::iterator data = datas.begin();data != datas.end();++data)
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			maxs[i] = data->properties[i];
+			mins[i] = data->properties[i];
+		}
+	}
 	//TODO:规格化
 	
 	//todo 递归建树
