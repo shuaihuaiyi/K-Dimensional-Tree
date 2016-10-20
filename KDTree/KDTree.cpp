@@ -8,7 +8,7 @@ vector<KDDData> readData(const string filename, int divider);
 
 int main()
 {
-	vector<KDDData> result = readData("kddcup.data_10_percent_corrected");
+	vector<KDDData> result = readData("kddcup.data_10_percent_corrected", 500);
 	return 0;
 }
 
@@ -33,7 +33,7 @@ vector<string> split(string s, string p)
 
 vector<KDDData> readData(const string filename, int divider)
 { //从KDD数据文件中读取1/n的数据
-	vector<KDDData> result;
+	vector<KDDData> result; //todo 这里用vector太慢
 	KDDData data;
 	vector<string> temp;
 	string s;
