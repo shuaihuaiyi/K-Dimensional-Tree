@@ -11,7 +11,6 @@ int main()
 {
 	clock_t start, finish;
 	string s;
-	int i = 0;
 	double totaltime;
 	start = clock();
 	set<KDDData*> result = readData("asd");
@@ -49,7 +48,7 @@ set<KDDData*> readData(const string& filename)
 	vector<string> temp;
 	string s;
 	ifstream in;
-//	in.sync_with_stdio(false);
+	//	in.sync_with_stdio(false);
 	in.open(filename);
 	if (in.fail())
 	{

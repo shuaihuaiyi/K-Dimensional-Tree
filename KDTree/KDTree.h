@@ -60,16 +60,17 @@ class KDTree
 public:
 	KDTree(set<KDDData*>& datas);
 	~KDTree();
-	void test(list<KDDData> testDatas);
+	void test(set<KDDData*> testDatas);
 	int getResult(KDDData testData);
 
 private:
-	void buildTree(KDTreeNode* node);
+	void buildTree(KDTreeNode* node) const;
 
 	KDTreeNode* root;
+	double radios[9];		//用于规格化时的比例，-1表示某维度只有常数值
 };
 
-KDTree::KDTree(set<KDDData*>& datas)
+inline KDTree::KDTree(set<KDDData*>& datas)
 {
 	double maxs[9];		//第N维的最大值
 	double mins[9];		//第N维的最小值
@@ -93,11 +94,14 @@ KDTree::KDTree(set<KDDData*>& datas)
 	//规格化数据
 	for (int i = 0; i < 9; ++i)
 	{
-		if(maxs[i] - mins[i] == 0)
+		if (maxs[i] - mins[i] == 0)
+		{
+			radios[i] = -1;
 			continue;
-		double radio = (new_max - new_min) / (maxs[i] - mins[i]);
+		}
+		radios[i] = (new_max - new_min) / (maxs[i] - mins[i]);
 		for (KDDData* data : datas)
-			data->properties[i] = (data->properties[i] - mins[i])*radio;//+new_min
+			data->properties[i] = (data->properties[i] - mins[i])*radios[i];//+new_min
 	}
 	//递归建树
 	root = new KDTreeNode;
@@ -106,7 +110,7 @@ KDTree::KDTree(set<KDDData*>& datas)
 	buildTree(root);
 }
 
-void KDTree::buildTree(KDTreeNode* node)
+inline void KDTree::buildTree(KDTreeNode* node) const
 {//递归建树
 	double maxs[9];		//第N维的最大值
 	double mins[9];		//第N维的最小值
@@ -139,7 +143,7 @@ void KDTree::buildTree(KDTreeNode* node)
 	node->spno = mins[node->d] + maxrange / 2;
 	node->gc = new KDTreeNode;
 	node->lc = new KDTreeNode;
-	for(KDDData* data : node->value)
+	for (KDDData* data : node->value)
 	{
 		if (data->properties[node->d] > node->spno)
 			node->gc->value.push_back(data);
@@ -151,14 +155,16 @@ void KDTree::buildTree(KDTreeNode* node)
 	buildTree(node->gc);
 }
 
-KDTree::~KDTree()
+inline KDTree::~KDTree()
 {
 	//todo 完成析构函数
 }
 
-inline void KDTree::test(list<KDDData> testDatas)
+inline void KDTree::test(set<KDDData*> testDatas)
 {
+	//规格化测试数据
 
+	//todo 
 }
 
 inline int KDTree::getResult(KDDData testData)
