@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <set>
 #include <list>
 #include <vector>
 //定义测试结果：
@@ -47,8 +48,8 @@ struct KDTreeNode
 {
 	int d = 0;			//分割维
 	double spno;		//分割点
-	double max = new_max;		//最大值
-	double min = new_min;		//最小值
+//	double max = new_max;		//最大值
+//	double min = new_min;		//最小值
 	KDTreeNode* lc = nullptr;	//小于等于分割点的分支
 	KDTreeNode* gc = nullptr;	//大于分割点的分支
 	list<KDDData*> value;	//如果是叶结点，在这里保存数据点的指针
@@ -57,7 +58,7 @@ struct KDTreeNode
 class KDTree
 {
 public:
-	KDTree(list<KDDData>& datas);
+	KDTree(set<KDDData*>& datas);
 	~KDTree();
 	void test(list<KDDData> testDatas);
 	int getResult(KDDData testData);
@@ -68,7 +69,7 @@ private:
 	KDTreeNode* root;
 };
 
-KDTree::KDTree(list<KDDData>& datas)
+KDTree::KDTree(set<KDDData*>& datas)
 {
 	double maxs[9];		//第N维的最大值
 	double mins[9];		//第N维的最小值
@@ -80,31 +81,28 @@ KDTree::KDTree(list<KDDData>& datas)
 	//else
 	//获取数据边界
 	for (int i = 0; i < 9; ++i)
-		mins[i] = maxs[i] = datas.front().properties[i];
-	for (KDDData& data : datas)
+		mins[i] = maxs[i] = (*(datas.begin()))->properties[i];
+	for (KDDData* data : datas)
 	{
 		for (int i = 0; i < 9; i++)
 		{
-			maxs[i] = data.properties[i] > maxs[i] ? data.properties[i] : maxs[i];
-			mins[i] = data.properties[i] < mins[i] ? data.properties[i] : mins[i];
+			maxs[i] = data->properties[i] > maxs[i] ? data->properties[i] : maxs[i];
+			mins[i] = data->properties[i] < mins[i] ? data->properties[i] : mins[i];
 		}
 	}
 	//规格化数据
 	for (int i = 0; i < 9; ++i)
 	{
-		double radio = (new_max - new_min) / (maxs[i] - mins[i]);
-		if (1 - radio < 0.001 || radio - 1 < 0.001)
+		if(maxs[i] - mins[i] == 0)
 			continue;
-		//else
-		maxs[i] = (maxs[i] - mins[i])*radio;
-		mins[i] = 0;//+new_min
-		for (KDDData& data : datas)
-			data.properties[i] = (data.properties[i] - mins[i])*radio;//+new_min
+		double radio = (new_max - new_min) / (maxs[i] - mins[i]);
+		for (KDDData* data : datas)
+			data->properties[i] = (data->properties[i] - mins[i])*radio;//+new_min
 	}
 	//递归建树
 	root = new KDTreeNode;
-	for (KDDData& data : datas)
-		root->value.push_back(&data);
+	for (KDDData* data : datas)
+		root->value.push_back(data);
 	buildTree(root);
 }
 
@@ -135,6 +133,8 @@ void KDTree::buildTree(KDTreeNode* node)
 			node->d = i;
 		}
 	}
+	if (maxrange == 0)
+		return;
 	//规定分割点，将点集分割
 	node->spno = mins[node->d] + maxrange / 2;
 	node->gc = new KDTreeNode;
