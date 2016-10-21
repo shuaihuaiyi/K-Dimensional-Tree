@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <time.h>
 #include "KDTree.h"
 //using namespace std;
