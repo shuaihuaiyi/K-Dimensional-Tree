@@ -16,7 +16,7 @@ int main()
 //	std::ios_base::sync_with_stdio(false);
 	start = clock();
 
-	list<KDDData> result = readData("kddcup.data_10_percent_corrected", 500);
+	list<KDDData> result = readData("kddcup.data_10_percent_corrected", 1);
 	finish = clock();
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
 	cout << "此程序的运行时间为" << totaltime << "秒！" << endl;
@@ -70,10 +70,10 @@ list<KDDData> readData(const string& filename, int divider)
 		temp = split(s, ",");
 		for (int i = 0; i < 9; i++)
 			data.properties[i] = atof(temp[i + 22].data());
-		if (temp[41] == "normal")
+		if (temp[41] == "normal.")
 			data.isNormal = true;
-		else if ((temp[41] == "back") || (temp[41] == "land") || (temp[41] == "neptune")
-			|| (temp[41] == "pod") || (temp[41] == "teardrop") || (temp[41] == "smurf"))
+		else if ((temp[41] == "back.") || (temp[41] == "land.") || (temp[41] == "neptune.")
+			|| (temp[41] == "pod.") || (temp[41] == "teardrop.") || (temp[41] == "smurf."))
 			data.isDoS = true;
 		result.push_back(data);
 	}

@@ -6,6 +6,9 @@
 #define IS_NORMAL 0
 #define IS_DOS 1
 #define OTHERS 2
+#define	new_max 2
+#define new_min 0
+#define bucket_size 5
 
 using namespace std;
 
@@ -42,10 +45,10 @@ struct KDDData
 
 struct KDTreeNode
 {
-	int d;			//分割维
-	double v;		//分割点
-	double max;		//最大值
-	double min;		//最小值
+	int d = 0;			//分割维
+	double spno;		//分割点
+	double max = new_max;		//最大值
+	double min = new_min;		//最小值
 	KDTreeNode* lc = nullptr;	//小于等于分割点的分支
 	KDTreeNode* gc = nullptr;	//大于分割点的分支
 	list<KDDData*> value;	//如果是叶结点，在这里保存数据点的指针
@@ -60,15 +63,13 @@ public:
 	int getResult(KDDData testData);
 
 private:
-	KDTreeNode * buildTree();
+	void buildTree(KDTreeNode* node);
 
-	KDTreeNode * root;
+	KDTreeNode* root;
 };
 
 KDTree::KDTree(list<KDDData>& datas)
 {
-	double new_max = 2;
-	double new_min = 0;
 	double maxs[9];		//第N维的最大值
 	double mins[9];		//第N维的最小值
 	if (datas.empty())
@@ -79,7 +80,7 @@ KDTree::KDTree(list<KDDData>& datas)
 	//else
 	//获取数据边界
 	for (int i = 0; i < 9; ++i)
-		mins[i] = maxs[i] = datas.begin()->properties[i];
+		mins[i] = maxs[i] = datas.front().properties[i];
 	for (KDDData& data : datas)
 	{
 		for (int i = 0; i < 9; i++)
@@ -91,26 +92,68 @@ KDTree::KDTree(list<KDDData>& datas)
 	//规格化数据
 	for (int i = 0; i < 9; ++i)
 	{
-		double radio = new_max - new_min / maxs[i] - mins[i];
+		double radio = (new_max - new_min) / (maxs[i] - mins[i]);
 		if (1 - radio < 0.001 || radio - 1 < 0.001)
 			continue;
+		//else
+		maxs[i] = (maxs[i] - mins[i])*radio;
+		mins[i] = 0;//+new_min
 		for (KDDData& data : datas)
-			data.properties[i] = (data.properties[i] - mins[i])*radio;//+new_mins
+			data.properties[i] = (data.properties[i] - mins[i])*radio;//+new_min
 	}
 	//递归建树
-	root
-	buildTree();
+	root = new KDTreeNode;
+	for (KDDData& data : datas)
+		root->value.push_back(&data);
+	buildTree(root);
 }
 
-KDTreeNode * KDTree::buildTree()
+void KDTree::buildTree(KDTreeNode* node)
 {//递归建树
-
-	return nullptr;
+	double maxs[9];		//第N维的最大值
+	double mins[9];		//第N维的最小值
+	double maxrange = 0;	//最大延展度
+	if (node->value.size() <= bucket_size)
+		return;
+	//获取数据边界
+	for (int i = 0; i < 9; ++i)
+		mins[i] = maxs[i] = node->value.front()->properties[i];
+	for (KDDData* data : node->value)
+	{
+		for (int i = 0; i < 9; i++)
+		{
+			maxs[i] = data->properties[i] > maxs[i] ? data->properties[i] : maxs[i];
+			mins[i] = data->properties[i] < mins[i] ? data->properties[i] : mins[i];
+		}
+	}
+	//找出具有最大延展度的维
+	for (int i = 0; i < 9; ++i)
+	{
+		if (maxrange < (maxs[i] - mins[i]))
+		{
+			maxrange = maxs[i] - mins[i];
+			node->d = i;
+		}
+	}
+	//规定分割点，将点集分割
+	node->spno = mins[node->d] + maxrange / 2;
+	node->gc = new KDTreeNode;
+	node->lc = new KDTreeNode;
+	for(KDDData* data : node->value)
+	{
+		if (data->properties[node->d] > node->spno)
+			node->gc->value.push_back(data);
+		else
+			node->lc->value.push_back(data);
+	}
+	//递归建树
+	buildTree(node->lc);
+	buildTree(node->gc);
 }
 
 KDTree::~KDTree()
 {
-
+	//todo 完成析构函数
 }
 
 inline void KDTree::test(list<KDDData> testDatas)
