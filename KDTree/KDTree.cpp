@@ -67,16 +67,24 @@ set<KDDData*> readData(const string& filename)
 				return result;
 			}
 		}*/
-		data = new KDDData;
 		temp = split(s, ",");
-		for (int i = 0; i < 9; i++)
-			data->properties[i] = atof(temp[i + 22].data());
 		if (temp[41] == "normal.")
+		{
+			data = new KDDData;
 			data->isNormal = true;
+			for (int i = 0; i < 9; i++)
+				data->properties[i] = atof(temp[i + 22].data());
+			result.insert(data);
+		}
 		else if ((temp[41] == "back.") || (temp[41] == "land.") || (temp[41] == "neptune.")
 			|| (temp[41] == "pod.") || (temp[41] == "teardrop.") || (temp[41] == "smurf."))
+		{
+			data = new KDDData;
 			data->isDoS = true;
-		result.insert(data);
+			for (int i = 0; i < 9; i++)
+				data->properties[i] = atof(temp[i + 22].data());
+			result.insert(data);
+		}
 	}
 	in.close();
 	return result;
