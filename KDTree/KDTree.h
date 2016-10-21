@@ -67,7 +67,7 @@ private:
 	void buildTree(KDTreeNode* node) const;
 
 	KDTreeNode* root;
-	double radios[9];		//用于规格化时的比例，-1表示某维度只有常数值
+	double radios[9];		//用于规格化时的比例
 };
 
 inline KDTree::KDTree(set<KDDData*>& datas)
@@ -96,7 +96,7 @@ inline KDTree::KDTree(set<KDDData*>& datas)
 	{
 		if (maxs[i] - mins[i] == 0)
 		{
-			radios[i] = -1;
+			radios[i] = 1;
 			continue;
 		}
 		radios[i] = (new_max - new_min) / (maxs[i] - mins[i]);
@@ -162,9 +162,23 @@ inline KDTree::~KDTree()
 
 inline void KDTree::test(set<KDDData*> testDatas)
 {
-	//规格化测试数据
-
-	//todo 
+	for(KDDData* data : testDatas)
+	{
+		//规格化测试数据
+		for (int i = 0; i < 9; ++i)
+			data->properties[i] *= radios[i];//+new_min
+		//归类
+		KDTreeNode* c = root, *nc = root;
+		while (nc!=nullptr)
+		{
+			c = nc;
+			if (data->properties[c->d] > c->spno)
+				nc = c->gc;
+			else
+				nc = c->lc;
+		}
+		//判断是否正常
+	}
 }
 
 inline int KDTree::getResult(KDDData testData)
