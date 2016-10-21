@@ -27,9 +27,6 @@
     <ClInclude Include="KDTree.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Data.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KDTree.cpp">
