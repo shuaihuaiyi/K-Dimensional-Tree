@@ -3,6 +3,7 @@
 #include <set>
 #include <list>
 #include <algorithm>
+#include <time.h>
 //定义测试结果：
 #define IS_NORMAL 0
 #define IS_DOS 1
@@ -74,10 +75,13 @@ private:
 
 inline KDTree::KDTree(set<KDDData*>& datas)
 {
-	
+	clock_t start, finish;
+	double totaltime;
+	start = clock();
+	cout << "正在建立KD树...";
 	if (datas.empty())
 	{
-		cerr << "用于建立KD树的数据集是空集" << endl;
+		cerr << "用于建立KD树的数据集是空集！" << endl;
 		return;
 	}
 	//else
@@ -109,6 +113,11 @@ inline KDTree::KDTree(set<KDDData*>& datas)
 	for (KDDData* data : datas)
 		root->value.push_back(data);
 	buildTree(root);
+	finish = clock();
+	totaltime = double(finish - start) / CLOCKS_PER_SEC;
+	cout << "完成！" << endl;
+	cout << "\t配置参数： NEW_MAX:" << NEW_MAX << ", NEW_MIN:" << NEW_MIN << ", BUCKET_SIZE:" << BUCKET_SIZE << ", MAX_DST:" << MAX_DST << endl;
+	cout << "\t大致耗时" << totaltime << "秒" << endl;
 }
 
 inline void KDTree::buildTree(KDTreeNode* node) const
@@ -165,6 +174,10 @@ inline void KDTree::test(set<KDDData*> testDatas)
 {
 	int result;
 	int cn = 0, cd = 0, co = 0, rn = 0, rd = 0, ro = 0, nmis = 0, dmatch = 0;
+	double totaltime;
+	clock_t start, finish;
+	start = clock();
+	cout << "正在进行测试...";
 	for (KDDData* testData : testDatas)
 	{
 		result = getResult(testData);
@@ -208,7 +221,12 @@ inline void KDTree::test(set<KDDData*> testDatas)
 			break;
 		}
 	}
-	cout << "测试结果：" << endl;
+	finish = clock();
+	totaltime = double(finish - start) / CLOCKS_PER_SEC;
+	cout << "\t测试结果：正常流量:" << rn << ", DoS攻击:" << rd << ", 其他情况:" << ro << endl;
+	cout << "\t实际情况：正常流量:" << cn << ", DoS攻击:" << cd << ", 其他情况:" << co << endl;
+	cout << "\tDoS检出率：" << double(dmatch) / double(cd) * 100 << "%, 正常流量误判率：" << double(nmis) / double(cn) << "%" << endl;
+	cout << "\t大致耗时" << totaltime << "秒" << endl;
 }
 
 inline int KDTree::getResult(KDDData* testData)

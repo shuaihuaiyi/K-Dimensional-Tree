@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <time.h>
 #include "KDTree.h"
 //using namespace std;
 
@@ -72,8 +71,8 @@ set<KDDData*> readTestData(const string& filename)
 	in.close();
 	finish = clock();
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
-	cout << "成功完成！\n\t已处理流量" << cEntry << "条。去除重复无效条目，用于测试KD树的数据集大小为" << result.size() << endl;
-	cout << "\t大致耗时：" << totaltime << "秒" << endl;
+	cout << "完成！\n\t已处理流量" << cEntry << "条。去除重复无效条目，用于测试KD树的数据集大小为" << result.size() << endl;
+	cout << "\t大致耗时" << totaltime << "秒" << endl;
 	return result;
 }
 
@@ -126,6 +125,6 @@ set<KDDData*> readData(const string& filename)
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
 	cout << "成功完成！\n\t已处理流量" << cEntry << "条。其中，正常流量" << cNormal << "条；DoS攻击" << cDoS << "条。" << endl;
 	cout << "\t去除重复无效条目，用于建立KD树的数据集大小为" << result.size()<<endl;
-	cout << "\t大致耗时：" << totaltime << "秒" << endl;
+	cout << "\t大致耗时" << totaltime << "秒" << endl;
 	return result;
 }
