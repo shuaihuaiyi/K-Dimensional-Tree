@@ -41,8 +41,7 @@ struct KDDData
 	//忽略特征31~40
 	*/
 	double properties[9];	//流量属性集，对应源数据中的第22-30项
-	bool isNormal = false;	//这个连接的类型，normal表示正常流量										41
-	bool isDoS = false;		//这个连接的类型，back，land，neptune，pod，teardrop，smurf表示DoS攻击		41
+	int label = OTHERS;		//这个连接的类型，normal表示正常流量, back，land，neptune，pod，teardrop，smurf表示DoS攻击		41
 };
 
 struct KDTreeNode
@@ -69,12 +68,13 @@ private:
 
 	KDTreeNode* root;
 	double radios[9];		//用于规格化时的比例
+	double maxs[9];		//第N维的最大值
+	double mins[9];		//第N维的最小值
 };
 
 inline KDTree::KDTree(set<KDDData*>& datas)
 {
-	double maxs[9];		//第N维的最大值
-	double mins[9];		//第N维的最小值
+	
 	if (datas.empty())
 	{
 		cerr << "用于建立KD树的数据集是空集" << endl;
@@ -113,35 +113,35 @@ inline KDTree::KDTree(set<KDDData*>& datas)
 
 inline void KDTree::buildTree(KDTreeNode* node) const
 {//递归建树
-	double maxs[9];		//第N维的最大值
-	double mins[9];		//第N维的最小值
+	double insidemaxs[9];		//第N维的最大值
+	double insidemins[9];		//第N维的最小值
 	double maxrange = 0;	//最大延展度
 	if (node->value.size() <= BUCKET_SIZE)
 		return;
 	//获取数据边界
 	for (int i = 0; i < 9; ++i)
-		mins[i] = maxs[i] = node->value.front()->properties[i];
+		insidemins[i] = insidemaxs[i] = node->value.front()->properties[i];
 	for (KDDData* data : node->value)
 	{
 		for (int i = 0; i < 9; i++)
 		{
-			maxs[i] = data->properties[i] > maxs[i] ? data->properties[i] : maxs[i];
-			mins[i] = data->properties[i] < mins[i] ? data->properties[i] : mins[i];
+			insidemaxs[i] = data->properties[i] > insidemaxs[i] ? data->properties[i] : insidemaxs[i];
+			insidemins[i] = data->properties[i] < insidemins[i] ? data->properties[i] : insidemins[i];
 		}
 	}
 	//找出具有最大延展度的维
 	for (int i = 0; i < 9; ++i)
 	{
-		if (maxrange < (maxs[i] - mins[i]))
+		if (maxrange < (insidemaxs[i] - insidemins[i]))
 		{
-			maxrange = maxs[i] - mins[i];
+			maxrange = insidemaxs[i] - insidemins[i];
 			node->d = i;
 		}
 	}
 	if (maxrange == 0)
 		return;
 	//规定分割点，将点集分割
-	node->spno = mins[node->d] + maxrange / 2;
+	node->spno = insidemins[node->d] + maxrange / 2;
 	node->gc = new KDTreeNode;
 	node->lc = new KDTreeNode;
 	for (KDDData* data : node->value)
@@ -164,18 +164,58 @@ inline KDTree::~KDTree()
 inline void KDTree::test(set<KDDData*> testDatas)
 {
 	int result;
+	int cn = 0, cd = 0, co = 0, rn = 0, rd = 0, ro = 0, nmis = 0, dmatch = 0;
 	for (KDDData* testData : testDatas)
 	{
 		result = getResult(testData);
-
+		switch (result)
+		{
+		case IS_NORMAL:
+			++rn;
+			if (testData->label == IS_NORMAL)
+				++cn;
+			else if (testData->label == IS_DOS)
+			{
+				++cd;
+				++nmis;
+			}
+			else
+				++co;
+			break;
+		case IS_DOS:
+			++rd;
+			if (testData->label == IS_DOS)
+			{
+				++cd;
+				++dmatch;
+			}
+			else if (testData->label == IS_NORMAL)
+				++cn;
+			else
+				++co;
+			break;
+		default:
+			++ro;
+			if (testData->label == IS_DOS)
+				++cd;
+			else if (testData->label == IS_NORMAL)
+			{
+				++cn;
+				++nmis;
+			}
+			else
+				++co;
+			break;
+		}
 	}
+	cout << "测试结果：" << endl;
 }
 
 inline int KDTree::getResult(KDDData* testData)
 {
 	//规格化测试数据
 	for (int i = 0; i < 9; ++i)
-		testData->properties[i] *= radios[i];//+NEW_MIN
+		testData->properties[i] = (testData->properties[i] - mins[i])*radios[i];//+NEW_MIN
 	//归类
 	KDTreeNode *c = root, *nc = root;
 	while (nc != nullptr)
@@ -186,7 +226,7 @@ inline int KDTree::getResult(KDDData* testData)
 	//判断是否正常
 	double dst = 100;
 	double sum;
-	KDDData* point;
+	KDDData* point = nullptr;
 	for (KDDData* data : c->value)
 	{
 		sum = 0;
@@ -205,8 +245,5 @@ inline int KDTree::getResult(KDDData* testData)
 	}
 	if (dst > MAX_DST)
 		return OTHERS;
-	if (point->isNormal)
-		return IS_NORMAL;
-	if (point->isDoS)
-		return IS_DOS;
+	return point->label;
 }

@@ -62,11 +62,11 @@ set<KDDData*> readTestData(const string& filename)
 		temp = split(s, ",");
 		for (int i = 0; i < 9; i++)
 			data->properties[i] = atof(temp[i + 22].data());
-		if (temp[41] == "normal.")
-			data->isNormal = true;
-		else if ((temp[41] == "back.") || (temp[41] == "land.") || (temp[41] == "neptune.")
-			|| (temp[41] == "pod.") || (temp[41] == "teardrop.") || (temp[41] == "smurf."))
-			data->isDoS = true;
+		if ("normal." == temp[41])
+			data->label = IS_NORMAL;
+		else if (("back." == temp[41]) || ("land." == temp[41]) || ("neptune." == temp[41])
+			|| ("pod." == temp[41]) || ("teardrop." == temp[41]) || ("smurf." == temp[41]))
+			data->label = IS_DOS;
 		result.insert(data);
 	}
 	in.close();
@@ -101,21 +101,21 @@ set<KDDData*> readData(const string& filename)
 	{
 		++cEntry;
 		temp = split(s, ",");
-		if (temp[41] == "normal.")
+		if ("normal." == temp[41])
 		{
 			data = new KDDData;
-			data->isNormal = true;
+			data->label = IS_NORMAL;
 			++cNormal;
 			for (int i = 0; i < 9; i++)
 				data->properties[i] = atof(temp[i + 22].data());
 			result.insert(data);
 		}
-		else if ((temp[41] == "back.") || (temp[41] == "land.") || (temp[41] == "neptune.")
-			|| (temp[41] == "pod.") || (temp[41] == "teardrop.") || (temp[41] == "smurf."))
+		else if (("back." == temp[41]) || ("land." == temp[41]) || "neptune." == temp[41]
+			|| ("pod." == temp[41]) || ("teardrop." == temp[41]) || ("smurf." == temp[41]))
 		{
 			data = new KDDData;
 			++cDoS;
-			data->isDoS = true;
+			data->label = IS_DOS;
 			for (int i = 0; i < 9; i++)
 				data->properties[i] = atof(temp[i + 22].data());
 			result.insert(data);
