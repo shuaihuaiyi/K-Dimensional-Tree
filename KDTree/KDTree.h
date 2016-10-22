@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <set>
 #include <list>
 #include <algorithm>
 #include <time.h>
@@ -8,7 +7,7 @@
 #define IS_NORMAL 0
 #define IS_DOS 1
 #define OTHERS 2
-#define	NEW_MAX 2
+#define	NEW_MAX 1000000
 #define NEW_MIN 0
 #define BUCKET_SIZE 5
 #define MAX_DST 9
@@ -49,8 +48,6 @@ struct KDTreeNode
 {
 	int d = 0;			//分割维
 	double spno;		//分割点
-//	double max = NEW_MAX;		//最大值
-//	double min = NEW_MIN;		//最小值
 	KDTreeNode* lc = nullptr;	//小于等于分割点的分支
 	KDTreeNode* gc = nullptr;	//大于分割点的分支
 	list<KDDData*> value;	//如果是叶结点，在这里保存数据点的指针
@@ -59,13 +56,13 @@ struct KDTreeNode
 class KDTree
 {
 public:
-	KDTree(set<KDDData*>& datas);
+	KDTree(vector<KDDData*>& datas);
 	~KDTree();
-	void test(set<KDDData*> testDatas);
+	void test(vector<KDDData*>& testDatas);
 	int getResult(KDDData* testData);
-
+	
 private:
-	void buildTree(KDTreeNode* node) const;
+	void buildTree(KDTreeNode* node);
 
 	KDTreeNode* root;
 	double radios[9];		//用于规格化时的比例
@@ -73,7 +70,7 @@ private:
 	double mins[9];		//第N维的最小值
 };
 
-inline KDTree::KDTree(set<KDDData*>& datas)
+inline KDTree::KDTree(vector<KDDData*>& datas)
 {
 	clock_t start, finish;
 	double totaltime;
@@ -120,7 +117,7 @@ inline KDTree::KDTree(set<KDDData*>& datas)
 	cout << "\t大致耗时" << totaltime << "秒" << endl;
 }
 
-inline void KDTree::buildTree(KDTreeNode* node) const
+inline void KDTree::buildTree(KDTreeNode* node)
 {//递归建树
 	double insidemaxs[9];		//第N维的最大值
 	double insidemins[9];		//第N维的最小值
@@ -170,11 +167,11 @@ inline KDTree::~KDTree()
 	//todo 完成析构函数
 }
 
-inline void KDTree::test(set<KDDData*> testDatas)
+inline void KDTree::test(vector<KDDData*>& testDatas)
 {
 	int result;
-	int cn = 0, cd = 0, co = 0, rn = 0, rd = 0, ro = 0, nmis = 0, dmatch = 0;
-	double totaltime;
+	int cn = 0, cd = 0, co = 0, rn = 0, rd = 0, ro = 0;
+	double totaltime, nmis = 0, dmatch = 0;
 	clock_t start, finish;
 	start = clock();
 	cout << "正在进行测试...";
@@ -223,9 +220,9 @@ inline void KDTree::test(set<KDDData*> testDatas)
 	}
 	finish = clock();
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
-	cout << "\t测试结果：正常流量:" << rn << ", DoS攻击:" << rd << ", 其他情况:" << ro << endl;
+	cout << "成功！\n\t测试结果：正常流量:" << rn << ", DoS攻击:" << rd << ", 其他情况:" << ro << endl;
 	cout << "\t实际情况：正常流量:" << cn << ", DoS攻击:" << cd << ", 其他情况:" << co << endl;
-	cout << "\tDoS检出率：" << double(dmatch) / double(cd) * 100 << "%, 正常流量误判率：" << double(nmis) / double(cn) << "%" << endl;
+	cout << "\tDoS检出率：" << dmatch / cd * 100 << "%, 正常流量误判率：" << nmis / cn * 100 << "%" << endl;
 	cout << "\t大致耗时" << totaltime << "秒" << endl;
 }
 
