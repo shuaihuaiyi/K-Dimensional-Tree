@@ -40,7 +40,7 @@ vector<string> split(string& s, const string& p)
 
 vector<KDDData*> readTestData(const string& filename)
 {
-	set<KDDData>* result = new set<KDDData>();
+	set<KDDData>* result;
 	vector<KDDData*> r;
 	KDDData data;
 	vector<string> temp;
@@ -58,6 +58,7 @@ vector<KDDData*> readTestData(const string& filename)
 		exit(-1);
 	}
 	temp.reserve(50);
+	result = new set<KDDData>();
 	while (getline(in, s))
 	{
 		++cEntry;
@@ -83,7 +84,7 @@ vector<KDDData*> readTestData(const string& filename)
 
 vector<KDDData*> readData(const string& filename)
 { //从KDD数据文件中读取数据
-	set<KDDData>* result = nullptr;
+	set<KDDData>* result;
 	vector<KDDData*> r;
 	KDDData data;
 	vector<string> temp;

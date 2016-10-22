@@ -13,7 +13,7 @@
 
 using namespace std;
 
-struct KDDData
+class KDDData
 {
 	/*
 	//基本属性集
@@ -39,8 +39,24 @@ struct KDDData
 	double srv_diff_host_rate;//% of connections to different hosts							30
 	//忽略特征31~40
 	*/
+public:
 	double properties[9];	//流量属性集，对应源数据中的第22-30项
-	int label = OTHERS;		//这个连接的类型，normal表示正常流量, back，land，neptune，pod，teardrop，smurf表示DoS攻击		41
+	int label;		//这个连接的类型，normal表示正常流量, back，land，neptune，pod，teardrop，smurf表示DoS攻击		41
+	KDDData() { label = OTHERS; }
+	bool operator<(const KDDData& rhs) const
+	{
+		return this->properties[0]<rhs.properties[0];
+	}
+	bool operator==(const KDDData& rhs) const
+	{
+		bool r = true;
+		for(int i = 0; i < 9; ++i)
+			if (this->properties[i] != rhs.properties[i])
+				r = false;
+		if (label != rhs.label)
+			r = false;
+		return r;
+	}
 };
 
 struct KDTreeNode
@@ -68,6 +84,8 @@ private:
 	double maxs[9];		//第N维的最大值
 	double mins[9];		//第N维的最小值
 };
+
+
 
 inline KDTree::KDTree(vector<KDDData*>& datas)
 {
