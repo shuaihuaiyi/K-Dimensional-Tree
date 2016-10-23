@@ -45,7 +45,7 @@ struct KDDData
 	bool operator==(const KDDData& rhs) const
 	{
 		bool r = true;
-		for(int i = 0; i < 9; ++i)
+		for (int i = 0; i < 9; ++i)
 			if (this->properties[i] != rhs.properties[i])
 				r = false;
 		if (label != rhs.label)
@@ -64,7 +64,7 @@ namespace std
 			result_type const h1(std::hash<double>{}(s.properties[0]));
 			result_type const h2(std::hash<double>{}(s.properties[1]));
 			result_type const h3(std::hash<int>{}(s.label));
-			return h1 *31 + h2 * 59 + h3;
+			return h1 * 31 + h2 * 59 + h3;
 		}
 	};
 }
@@ -85,7 +85,7 @@ public:
 	~KDTree();
 	void test(vector<KDDData>* testDatas) const;
 	int getResult(KDDData* testData) const;
-	
+
 private:
 	void buildTree(KDTreeNode* node);
 
@@ -238,7 +238,7 @@ inline void KDTree::test(vector<KDDData>* testDatas) const
 			else if (testData.label == IS_NORMAL)
 			{
 				++cn;
-				nmis+=0.5;
+				nmis += 0.5;
 			}
 			else
 				++co;

@@ -84,7 +84,7 @@ vector<KDDData>* readTestData(const string& filename)
 	in.close();
 	r = new vector<KDDData>();
 	r->reserve(result.size());
-	for(KDDData d : result)
+	for (KDDData d : result)
 		r->push_back(d);
 	finish = clock();
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
@@ -105,7 +105,6 @@ vector<KDDData>* readData(const string& filename)
 	double totaltime;
 	cout << "正在读取文件 " << filename << " ...";
 	int cEntry = 0, cNormal = 0, cDoS = 0;
-	//	in.sync_with_stdio(false);
 	start = clock();
 	in.open(filename);
 	if (in.fail())
