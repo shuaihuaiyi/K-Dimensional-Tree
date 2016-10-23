@@ -71,10 +71,10 @@ struct KDTreeNode
 class KDTree
 {
 public:
-	KDTree(vector<KDDData*>& datas);
+	KDTree(vector<KDDData>* datas);
 	~KDTree();
-	void test(vector<KDDData*>& testDatas);
-	int getResult(KDDData* testData);
+	void test(vector<KDDData>* testDatas) const;
+	int getResult(KDDData* testData) const;
 	
 private:
 	void buildTree(KDTreeNode* node);
@@ -87,13 +87,13 @@ private:
 
 
 
-inline KDTree::KDTree(vector<KDDData*>& datas)
+inline KDTree::KDTree(vector<KDDData>* datas)
 {
 	clock_t start, finish;
 	double totaltime;
 	start = clock();
 	cout << "正在建立KD树...";
-	if (datas.empty())
+	if (datas->empty())
 	{
 		cerr << "用于建立KD树的数据集是空集！" << endl;
 		return;
@@ -101,13 +101,13 @@ inline KDTree::KDTree(vector<KDDData*>& datas)
 	//else
 	//获取数据边界
 	for (int i = 0; i < 9; ++i)
-		mins[i] = maxs[i] = (*(datas.begin()))->properties[i];
-	for (KDDData* data : datas)
+		mins[i] = maxs[i] = (datas->begin())->properties[i];
+	for (KDDData& data : *datas)
 	{
 		for (int i = 0; i < 9; i++)
 		{
-			maxs[i] = data->properties[i] > maxs[i] ? data->properties[i] : maxs[i];
-			mins[i] = data->properties[i] < mins[i] ? data->properties[i] : mins[i];
+			maxs[i] = data.properties[i] > maxs[i] ? data.properties[i] : maxs[i];
+			mins[i] = data.properties[i] < mins[i] ? data.properties[i] : mins[i];
 		}
 	}
 	//规格化数据
@@ -119,13 +119,13 @@ inline KDTree::KDTree(vector<KDDData*>& datas)
 			continue;
 		}
 		radios[i] = (NEW_MAX - NEW_MIN) / (maxs[i] - mins[i]);
-		for (KDDData* data : datas)
-			data->properties[i] = (data->properties[i] - mins[i])*radios[i];//+NEW_MIN
+		for (KDDData& data : *datas)
+			data.properties[i] = (data.properties[i] - mins[i])*radios[i];//+NEW_MIN
 	}
 	//递归建树
 	root = new KDTreeNode;
-	for (KDDData* data : datas)
-		root->value.push_back(data);
+	for (KDDData& data : *datas)
+		root->value.push_back(&data);
 	buildTree(root);
 	finish = clock();
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
@@ -184,7 +184,7 @@ inline KDTree::~KDTree()
 	//todo 完成析构函数
 }
 
-inline void KDTree::test(vector<KDDData*>& testDatas)
+inline void KDTree::test(vector<KDDData>* testDatas) const
 {
 	int result;
 	int cn = 0, cd = 0, co = 0, rn = 0, rd = 0, ro = 0;
@@ -192,16 +192,16 @@ inline void KDTree::test(vector<KDDData*>& testDatas)
 	clock_t start, finish;
 	start = clock();
 	cout << "正在进行测试...";
-	for (KDDData* testData : testDatas)
+	for (KDDData& testData : *testDatas)
 	{
-		result = getResult(testData);
+		result = getResult(&testData);
 		switch (result)
 		{
 		case IS_NORMAL:
 			++rn;
-			if (testData->label == IS_NORMAL)
+			if (testData.label == IS_NORMAL)
 				++cn;
-			else if (testData->label == IS_DOS)
+			else if (testData.label == IS_DOS)
 			{
 				++cd;
 				++nmis;
@@ -211,21 +211,21 @@ inline void KDTree::test(vector<KDDData*>& testDatas)
 			break;
 		case IS_DOS:
 			++rd;
-			if (testData->label == IS_DOS)
+			if (testData.label == IS_DOS)
 			{
 				++cd;
 				++dmatch;
 			}
-			else if (testData->label == IS_NORMAL)
+			else if (testData.label == IS_NORMAL)
 				++cn;
 			else
 				++co;
 			break;
 		default:
 			++ro;
-			if (testData->label == IS_DOS)
+			if (testData.label == IS_DOS)
 				++cd;
-			else if (testData->label == IS_NORMAL)
+			else if (testData.label == IS_NORMAL)
 			{
 				++cn;
 				++nmis;
@@ -243,7 +243,7 @@ inline void KDTree::test(vector<KDDData*>& testDatas)
 	cout << "\t大致耗时" << totaltime << "秒" << endl;
 }
 
-inline int KDTree::getResult(KDDData* testData)
+inline int KDTree::getResult(KDDData* testData) const
 {
 	//规格化测试数据
 	for (int i = 0; i < 9; ++i)
