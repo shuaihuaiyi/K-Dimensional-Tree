@@ -2,6 +2,7 @@
 #include <string>
 #include <list>
 #include <time.h>
+#include <math.h>
 //定义测试结果：
 #define IS_NORMAL 0
 #define IS_DOS 1
@@ -9,7 +10,7 @@
 #define	NEW_MAX 1000000
 #define NEW_MIN 0
 #define BUCKET_SIZE 4
-#define MAX_DST 3000000
+#define MAX_DST 900000
 
 using namespace std;
 
@@ -269,19 +270,14 @@ inline int KDTree::getResult(KDDData* testData) const
 		nc = testData->properties[c->d] > c->spno ? c->gc : c->lc;
 	}
 	//判断是否正常
-	double dst = DBL_MAX;
-	double sum;
+	double dst = DBL_MAX, sum;
 	KDDData* point = nullptr;
 	for (KDDData* data : c->value)
 	{
 		sum = 0;
 		for (int i = 0; i < 9; ++i)
-		{
-			if ((data->properties[i] - testData->properties[i]) >= 0)
-				sum += data->properties[i] - testData->properties[i];
-			else
-				sum -= data->properties[i] - testData->properties[i];
-		}
+			sum += (data->properties[i] - testData->properties[i]) * (data->properties[i] - testData->properties[i]);
+		sum = sqrt(sum);
 		if (dst > sum)
 		{
 			dst = sum;
