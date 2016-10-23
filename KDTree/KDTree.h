@@ -8,8 +8,8 @@
 #define OTHERS 2
 #define	NEW_MAX 1000000
 #define NEW_MIN 0
-#define BUCKET_SIZE 5
-#define MAX_DST 700000
+#define BUCKET_SIZE 4
+#define MAX_DST 3000000
 
 using namespace std;
 
@@ -224,7 +224,10 @@ inline void KDTree::test(vector<KDDData>* testDatas) const
 				++dmatch;
 			}
 			else if (testData.label == IS_NORMAL)
+			{
+				++nmis;
 				++cn;
+			}
 			else
 				++co;
 			break;
