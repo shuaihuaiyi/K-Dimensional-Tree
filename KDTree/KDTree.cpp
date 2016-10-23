@@ -11,9 +11,19 @@ vector<KDDData>* readTestData(const string& filename);
 
 int main()
 {
+	cout << "╔════════════════════════════════════════════╗" << endl;
+	cout << "║                                  基于KD树的DoS异常检测                                 ║" << endl;
+	cout << "║                                                                                        ║" << endl;
+	cout << "║                                                                           作者：率怀一 ║" << endl;
+	cout << "║                                                                         2016年10月23日 ║" << endl;
+	cout << "╚════════════════════════════════════════════╝" << endl;
+	cout << "\n************************************** 读取训练数据 ***************************************" << endl;
 	vector<KDDData>* result = readData("kddcup.data_10_percent_corrected");
+	cout << "\n**************************************** 建立KD树 *****************************************" << endl;
 	KDTree kdt(result);
+	cout << "\n************************************** 读取测试数据 ***************************************" << endl;
 	vector<KDDData>* test = readTestData("corrected");
+	cout << "\n**************************************** 执行测试 *****************************************" << endl;
 	kdt.test(test);
 	return 0;
 }
@@ -133,7 +143,7 @@ vector<KDDData>* readData(const string& filename)
 		r->push_back(d);
 	finish = clock();
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
-	cout << "成功完成！\n\t已处理流量" << cEntry << "条。其中，正常流量" << cNormal << "条；DoS攻击" << cDoS << "条。" << endl;
+	cout << "完成！\n\t已处理流量" << cEntry << "条。其中，正常流量" << cNormal << "条；DoS攻击" << cDoS << "条。" << endl;
 	cout << "\t去除重复无效条目，用于建立KD树的数据集大小为" << r->size() << endl;
 	cout << "\t大致耗时" << totaltime << "秒" << endl;
 	return r;

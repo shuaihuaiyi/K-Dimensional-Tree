@@ -247,7 +247,7 @@ inline void KDTree::test(vector<KDDData>* testDatas) const
 	}
 	finish = clock();
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
-	cout << "成功！\n\t测试结果：正常流量:" << rn << ", DoS攻击:" << rd << ", 其他情况:" << ro << endl;
+	cout << "完成！\n\t测试结果：正常流量:" << rn << ", DoS攻击:" << rd << ", 其他情况:" << ro << endl;
 	cout << "\t实际情况：正常流量:" << cn << ", DoS攻击:" << cd << ", 其他情况:" << co << endl;
 	cout << "\tDoS检出率：" << dmatch / cd * 100 << "%, 正常流量误判率：" << nmis / cn * 100 << "%" << endl;
 	cout << "\t大致耗时" << totaltime << "秒" << endl;
@@ -266,7 +266,7 @@ inline int KDTree::getResult(KDDData* testData) const
 		nc = testData->properties[c->d] > c->spno ? c->gc : c->lc;
 	}
 	//判断是否正常
-	double dst = 5000000;
+	double dst = DBL_MAX;
 	double sum;
 	KDDData* point = nullptr;
 	for (KDDData* data : c->value)
