@@ -13,7 +13,7 @@
 
 using namespace std;
 
-class KDDData
+struct KDDData
 {
 	/*
 	//基本属性集
@@ -39,14 +39,9 @@ class KDDData
 	double srv_diff_host_rate;//% of connections to different hosts							30
 	//忽略特征31~40
 	*/
-public:
 	double properties[9];	//流量属性集，对应源数据中的第22-30项
 	int label;		//这个连接的类型，normal表示正常流量, back，land，neptune，pod，teardrop，smurf表示DoS攻击		41
 	KDDData() { label = OTHERS; }
-	bool operator<(const KDDData& rhs) const
-	{
-		return this->properties[0]<rhs.properties[0];
-	}
 	bool operator==(const KDDData& rhs) const
 	{
 		bool r = true;
@@ -58,6 +53,21 @@ public:
 		return r;
 	}
 };
+namespace std
+{
+	template<> struct hash<KDDData>
+	{
+		typedef KDDData argument_type;
+		typedef std::size_t result_type;
+		result_type operator()(argument_type const& s) const
+		{
+			result_type const h1(std::hash<double>{}(s.properties[0]));
+			result_type const h2(std::hash<double>{}(s.properties[1]));
+			result_type const h3(std::hash<int>{}(s.label));
+			return h1 *31 + h2 * 59 + h3;
+		}
+	};
+}
 
 struct KDTreeNode
 {
@@ -202,10 +212,7 @@ inline void KDTree::test(vector<KDDData>* testDatas) const
 			if (testData.label == IS_NORMAL)
 				++cn;
 			else if (testData.label == IS_DOS)
-			{
 				++cd;
-				++nmis;
-			}
 			else
 				++co;
 			break;
@@ -224,11 +231,14 @@ inline void KDTree::test(vector<KDDData>* testDatas) const
 		default:
 			++ro;
 			if (testData.label == IS_DOS)
+			{
 				++cd;
+				dmatch += 0.5;
+			}
 			else if (testData.label == IS_NORMAL)
 			{
 				++cn;
-				++nmis;
+				nmis+=0.5;
 			}
 			else
 				++co;

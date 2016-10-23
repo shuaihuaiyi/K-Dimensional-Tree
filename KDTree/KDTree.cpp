@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <set>
+#include <unordered_set>
 #include "KDTree.h"
 //using namespace std;
 
@@ -11,9 +11,9 @@ vector<KDDData>* readTestData(const string& filename);
 
 int main()
 {
-	vector<KDDData>* result = readData("asd");
+	vector<KDDData>* result = readData("kddcup.data_10_percent_corrected");
 	KDTree kdt(result);
-	vector<KDDData>* test = readTestData("test");
+	vector<KDDData>* test = readTestData("corrected");
 	kdt.test(test);
 	return 0;
 }
@@ -40,7 +40,7 @@ vector<string> split(string& s, const string& p)
 
 vector<KDDData>* readTestData(const string& filename)
 {
-	set<KDDData> result;
+	unordered_set<KDDData> result;
 	vector<KDDData>* r;
 	KDDData data;
 	vector<string> temp;
@@ -85,7 +85,7 @@ vector<KDDData>* readTestData(const string& filename)
 
 vector<KDDData>* readData(const string& filename)
 { //从KDD数据文件中读取数据
-	set<KDDData> result;
+	unordered_set<KDDData> result;
 	vector<KDDData>* r;
 	KDDData data;
 	vector<string> temp;
