@@ -9,7 +9,7 @@
 #define	NEW_MAX 1000000
 #define NEW_MIN 0
 #define BUCKET_SIZE 5
-#define MAX_DST 9
+#define MAX_DST 700000
 
 using namespace std;
 
@@ -266,7 +266,7 @@ inline int KDTree::getResult(KDDData* testData) const
 		nc = testData->properties[c->d] > c->spno ? c->gc : c->lc;
 	}
 	//ÅÐ¶ÏÊÇ·ñÕý³£
-	double dst = 100;
+	double dst = 5000000;
 	double sum;
 	KDDData* point = nullptr;
 	for (KDDData* data : c->value)
