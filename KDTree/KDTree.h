@@ -103,7 +103,7 @@ inline KDTree::KDTree(vector<KDDData>* datas)
 	clock_t start, finish;
 	double totaltime;
 	start = clock();
-	cout << "正在建立KD树...";
+	cout << "规格化数据...";
 	if (datas->empty())
 	{
 		cerr << "用于建立KD树的数据集是空集！" << endl;
@@ -133,7 +133,10 @@ inline KDTree::KDTree(vector<KDDData>* datas)
 		for (KDDData& data : *datas)
 			data.properties[i] = (data.properties[i] - mins[i])*radios[i];//+NEW_MIN
 	}
+	cout << "完成！\n\t数据规模：" << datas->size() << endl;
+	cout << "\t规格化边界：[" << NEW_MIN << ", " << NEW_MAX << "]" << endl;
 	//递归建树
+	cout << "递归建树...";
 	root = new KDTreeNode;
 	for (KDDData& data : *datas)
 		root->value.push_back(&data);
@@ -141,7 +144,7 @@ inline KDTree::KDTree(vector<KDDData>* datas)
 	finish = clock();
 	totaltime = double(finish - start) / CLOCKS_PER_SEC;
 	cout << "完成！" << endl;
-	cout << "\t配置参数： NEW_MAX:" << NEW_MAX << ", NEW_MIN:" << NEW_MIN << ", BUCKET_SIZE:" << BUCKET_SIZE << ", MAX_DST:" << MAX_DST << endl;
+	cout << "\t叶节点的最大容量:" << BUCKET_SIZE << endl;
 	cout << "\t大致耗时" << totaltime << "秒" << endl;
 }
 
@@ -202,7 +205,7 @@ inline void KDTree::test(vector<KDDData>* testDatas) const
 	double totaltime, nmis = 0, dmatch = 0;
 	clock_t start, finish;
 	start = clock();
-	cout << "正在进行测试...";
+	cout << "以 " << MAX_DST << " 为阀值进行测试...";
 	for (KDDData& testData : *testDatas)
 	{
 		result = getResult(&testData);
