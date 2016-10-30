@@ -1,0 +1,6 @@
+{
+  "name": "K-dimensional-tree",
+  "tagline": "KD树的C++实现",
+  "body": "# K-Dimensional-Tree\r\nKD树的C++实现\r\n\r\n训练数据集大小为494021，测试数据集大小为311029。仅使用流量属性集，对DoS攻击进行检测。耗时不超过5秒，准确率95%以上。\r\n\r\n![](https://ws2.sinaimg.cn/large/7156d016jw1f92fahwwjej20xz0lxk0i.jpg)\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
