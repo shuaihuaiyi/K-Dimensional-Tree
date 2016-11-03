@@ -195,7 +195,6 @@ inline void KDTree::buildTree(KDTreeNode* node)
 
 inline KDTree::~KDTree()
 {
-	//todo 完成析构函数
 }
 
 inline void KDTree::test(vector<KDDData>* testDatas) const
